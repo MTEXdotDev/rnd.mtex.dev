@@ -1,0 +1,13 @@
+# Environment
+.env
+
+# SQLite databases
+database/*.sqlite
+
+# Storage (logs & cache — keep directory structure)
+storage/logs/*.log
+storage/cache/*.cache
+
+# OS
+.DS_Store
+Thumbs.db
