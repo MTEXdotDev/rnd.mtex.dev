@@ -319,3 +319,38 @@ footer {
 footer a { color: var(--muted); text-decoration: none; }
 footer a:hover { color: var(--text); }
 footer .sep { margin: 0 .75rem; opacity: .3; }
+
+.footer-services {
+    margin-bottom: .6rem;
+}
+
+.footer-meta {
+    font-size: .7rem;
+    color: #334155;
+}
+
+.footer-meta a { color: #334155; }
+.footer-meta a:hover { color: var(--muted); }
+
+/* ── Nav status pill ── */
+.nav-status {
+    display: inline-flex; align-items: center; gap: .4rem;
+    padding: .2rem .55rem;
+    border-radius: 999px;
+    border: 1px solid var(--border);
+    background: rgba(255,255,255,.03);
+    font-size: .75rem !important;
+    transition: border-color .2s;
+}
+.nav-status:hover { border-color: var(--muted) !important; }
+
+.status-dot {
+    width: 7px; height: 7px;
+    border-radius: 50%;
+    background: var(--border);   /* neutral until JS resolves */
+    transition: background .4s;
+    flex-shrink: 0;
+}
+.status-dot.ok       { background: #10b981; box-shadow: 0 0 0 2px rgba(16,185,129,.2); }
+.status-dot.degraded { background: #f59e0b; box-shadow: 0 0 0 2px rgba(245,158,11,.2); }
+.status-dot.error    { background: #ef4444; box-shadow: 0 0 0 2px rgba(239,68,68,.2); }

@@ -42,6 +42,29 @@
     setInterval(addLine, 2200);
 }());
 
+// ── MTEX platform status indicator ────────────────────────────────────────────
+(function () {
+    const dot   = document.getElementById('status-dot');
+    const label = document.getElementById('status-label');
+    if (!dot || !label) return;
+
+    fetch('https://status.mtex.dev/?type=check', { cache: 'no-store' })
+        .then(function (r) { return r.ok ? r.json() : Promise.reject(r.status); })
+        .then(function (data) {
+            if (data && data.operational === true) {
+                dot.className   = 'status-dot ok';
+                label.textContent = 'operational';
+            } else {
+                dot.className   = 'status-dot degraded';
+                label.textContent = 'degraded';
+            }
+        })
+        .catch(function () {
+            dot.className   = 'status-dot error';
+            label.textContent = 'unknown';
+        });
+}());
+
 // ── Copy-to-clipboard for code blocks ─────────────────────────────────────────
 function copyCode(btn, id) {
     const el = document.getElementById(id);

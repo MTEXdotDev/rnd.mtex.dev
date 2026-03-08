@@ -7,8 +7,12 @@
     <div class="nav-links">
         <a href="#endpoints">Endpoints</a>
         <a href="#examples">Examples</a>
-        <a href="/api/ping">Ping</a>
-        <a href="https://mtex.dev" target="_blank">MTEX.dev ↗</a>
+        <a href="https://gh.mtex.dev/rnd.mtex.dev" target="_blank" title="GitHub">GitHub</a>
+        <a href="https://index.mtex.dev" target="_blank">Services ↗</a>
+        <a href="https://status.mtex.dev" target="_blank" class="nav-status" id="nav-status" title="MTEX Platform Status">
+            <span class="status-dot" id="status-dot"></span>
+            <span id="status-label">status</span>
+        </a>
     </div>
 </nav>
 
@@ -141,16 +145,27 @@ r = requests.<span class="fn">get</span>(<span class="str">'https://rnd.mtex.dev
 
 <!-- Footer -->
 <footer>
-    <p>
-        <a href="https://mtex.dev">MTEX.dev</a>
-        <span class="sep">|</span>
-        <a href="https://status.mtex.dev">Status</a>
-        <span class="sep">|</span>
-        <a href="https://nx.mtex.dev">Nexus API</a>
-        <span class="sep">|</span>
-        <a href="https://tw.mtex.dev">Tailwind Lib</a>
-        <span class="sep">|</span>
+    <div class="footer-services">
+        <a href="https://mtex.dev">mtex.dev</a>
+        <span class="sep">·</span>
+        <a href="https://index.mtex.dev">index.mtex.dev</a>
+        <span class="sep">·</span>
+        <a href="https://status.mtex.dev">status.mtex.dev</a>
+        <span class="sep">·</span>
+        <a href="https://nx.mtex.dev">nx.mtex.dev</a>
+        <span class="sep">·</span>
+        <a href="https://tw.mtex.dev">tw.mtex.dev</a>
+        <span class="sep">·</span>
+        <a href="https://diff.mtex.dev">diff.mtex.dev</a>
+        <span class="sep">·</span>
+        <a href="https://legal.mtex.dev">legal.mtex.dev</a>
+    </div>
+    <div class="footer-meta">
         Built with <a href="https://gh.mtex.dev/php-zero">php-zero</a>
-    </p>
+        <span class="sep">·</span>
+        <a href="https://gh.mtex.dev/rnd.mtex.dev">GitHub ↗</a>
+        <span class="sep">·</span>
+        <a href="/api/status">API status</a>
+    </div>
 </footer>
 

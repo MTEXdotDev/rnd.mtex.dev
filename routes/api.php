@@ -10,6 +10,7 @@ $router->group('/api', function (Router $r): void {
     // ── Meta ──────────────────────────────────────────────────────────────────
     $r->get('/ping',      'RndController@ping');
     $r->get('/endpoints', 'RndController@endpoints');
+    $r->get('/status',    'RndController@status');
 
     // ── Generators ────────────────────────────────────────────────────────────
     $r->get('/uuid',     'RndController@uuid');

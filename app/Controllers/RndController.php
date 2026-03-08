@@ -53,6 +53,36 @@ class RndController
         ]);
     }
 
+    public function status(): never
+    {
+        $ctx = stream_context_create(['http' => [
+            'timeout'        => 4,
+            'ignore_errors'  => true,
+            'user_agent'     => 'rnd.mtex.dev/1.0',
+        ]]);
+
+        // Fetch operational flag
+        $checkRaw = @file_get_contents('https://status.mtex.dev/?type=check', false, $ctx);
+        $check    = $checkRaw !== false ? json_decode($checkRaw, true) : null;
+        $operational = is_array($check) && isset($check['operational'])
+            ? (bool) $check['operational']
+            : null;
+
+        // Fetch full service list
+        $servicesRaw = @file_get_contents('https://status.mtex.dev/?type=raw', false, $ctx);
+        $services    = $servicesRaw !== false ? json_decode($servicesRaw, true) : null;
+
+        Response::make()
+            ->noCache()
+            ->header('X-Source', 'status.mtex.dev')
+            ->json([
+                'operational' => $operational,
+                'source'      => 'https://status.mtex.dev',
+                'fetched_at'  => date('c'),
+                'services'    => $services ?? [],
+            ]);
+    }
+
     public function endpoints(): never
     {
         Response::toJson([
@@ -61,6 +91,7 @@ class RndController
             'endpoints' => [
                 ['method' => 'GET', 'path' => '/ping',     'description' => 'Health check'],
                 ['method' => 'GET', 'path' => '/endpoints','description' => 'This list'],
+                ['method' => 'GET', 'path' => '/status',   'description' => 'MTEX platform status (proxied from status.mtex.dev)'],
                 ['method' => 'GET', 'path' => '/uuid',     'description' => 'UUID v4',               'params' => ['count']],
                 ['method' => 'GET', 'path' => '/name',     'description' => 'Random person name',     'params' => ['count', 'gender:male|female|any']],
                 ['method' => 'GET', 'path' => '/email',    'description' => 'Random email address',   'params' => ['count', 'domain']],
