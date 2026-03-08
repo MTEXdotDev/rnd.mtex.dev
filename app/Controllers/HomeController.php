@@ -6,22 +6,13 @@ namespace App\Controllers;
 
 use App\Core\View;
 
-/**
- * HomeController — Handles the main web pages.
- *
- * @author  MTEX.dev <gh.mtex.dev/php-zero>
- * @license MIT
- */
-final class HomeController
+class HomeController
 {
-    /**
-     * GET /
-     */
     public function index(): string
     {
         return View::render('home', [
-            'title'       => 'PHP-Zero',
-            'description' => 'Lightweight PHP Framework by MTEX.dev',
+            'title'       => 'rnd.mtex.dev — Random Data API',
+            'description' => 'Instant random & fake data for developers. No auth. No setup. Just GET requests.',
         ], 'app');
     }
 }

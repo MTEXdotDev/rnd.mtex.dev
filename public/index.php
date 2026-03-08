@@ -2,64 +2,45 @@
 
 declare(strict_types=1);
 
-/**
- * PHP-Zero Framework — Entry Point
- *
- * @author  MTEX.dev <gh.mtex.dev/php-zero>
- * @license MIT
- */
-
 define('BASE_PATH', dirname(__DIR__));
-define('APP_START', microtime(true));
 
-// ─── Autoloader ──────────────────────────────────────────────────────────────
-
+// ── Autoloader ────────────────────────────────────────────────────────────────
 spl_autoload_register(function (string $class): void {
     $map = [
         'App\\Core\\'        => BASE_PATH . '/app/Core/',
         'App\\Controllers\\' => BASE_PATH . '/app/Controllers/',
     ];
-
-    foreach ($map as $prefix => $baseDir) {
+    foreach ($map as $prefix => $dir) {
         if (str_starts_with($class, $prefix)) {
-            $relative = str_replace('\\', '/', substr($class, strlen($prefix)));
-            $file     = $baseDir . $relative . '.php';
-
-            if (is_file($file)) {
-                require_once $file;
+            $file = $dir . str_replace('\\', '/', substr($class, strlen($prefix))) . '.php';
+            if (file_exists($file)) {
+                require $file;
                 return;
             }
         }
     }
 });
 
-// ─── Global helpers ───────────────────────────────────────────────────────────
-
-require_once BASE_PATH . '/app/Core/helpers.php';
-
-// ─── Bootstrap ───────────────────────────────────────────────────────────────
-
+// ── Bootstrap ─────────────────────────────────────────────────────────────────
 use App\Core\Config;
 use App\Core\ExceptionHandler;
 use App\Core\Router;
 
-// 1. Load environment + configuration
 Config::load(BASE_PATH . '/.env');
 
-// 2. Set timezone
-date_default_timezone_set(Config::get('APP_TIMEZONE', 'Europe/Berlin'));
+date_default_timezone_set(Config::get('APP_TIMEZONE', 'UTC'));
 
-// 3. Register global exception / error handler
+require BASE_PATH . '/app/Core/helpers.php';
+
 ExceptionHandler::register();
 
-// ─── Routing ─────────────────────────────────────────────────────────────────
-
+// ── Routes ────────────────────────────────────────────────────────────────────
 $router = new Router();
 
 require BASE_PATH . '/routes/web.php';
 require BASE_PATH . '/routes/api.php';
 
 $router->dispatch(
-    method: $_SERVER['REQUEST_METHOD'],
-    uri:    parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH) ?? '/'
+    $_SERVER['REQUEST_METHOD'],
+    parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH) ?? '/'
 );
