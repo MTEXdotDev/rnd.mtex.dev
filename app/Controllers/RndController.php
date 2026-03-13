@@ -11,6 +11,15 @@ class RndController
 {
     // ── Helpers ───────────────────────────────────────────────────────────────
 
+    /** Apply CORS headers to the response object. */
+    private function applyCors(Response $response): Response
+    {
+        return $response
+            ->header('Access-Control-Allow-Origin', '*')
+            ->header('Access-Control-Allow-Methods', 'GET, POST, PUT, PATCH, DELETE, OPTIONS')
+            ->header('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Requested-With, Accept');
+    }
+
     /** Clamp a count param between 1 and $max. */
     private function count(int $max = 100): int
     {
@@ -21,12 +30,12 @@ class RndController
     private function respond(mixed $single, mixed $multi, int $count): never
     {
         if ($count === 1) {
-            Response::make()
+            $this->applyCors(Response::make())
                 ->noCache()
                 ->header('X-RND-Count', '1')
                 ->json($single);
         }
-        Response::make()
+        $this->applyCors(Response::make())
             ->noCache()
             ->header('X-RND-Count', (string) $count)
             ->json(['count' => $count, 'results' => $multi]);
@@ -45,12 +54,14 @@ class RndController
 
     public function ping(): never
     {
-        Response::toJson([
-            'pong'    => true,
-            'service' => 'rnd.mtex.dev',
-            'version' => '1.0.0',
-            'time'    => date('c'),
-        ]);
+        $this->applyCors(Response::make())
+            ->noCache()
+            ->json([
+                'pong'    => true,
+                'service' => 'rnd.mtex.dev',
+                'version' => '1.0.0',
+                'time'    => date('c'),
+            ]);
     }
 
     public function status(): never
@@ -72,7 +83,7 @@ class RndController
         $servicesRaw = @file_get_contents('https://status.mtex.dev/?type=raw', false, $ctx);
         $services    = $servicesRaw !== false ? json_decode($servicesRaw, true) : null;
 
-        Response::make()
+        $this->applyCors(Response::make())
             ->noCache()
             ->header('X-Source', 'status.mtex.dev')
             ->json([
@@ -85,31 +96,33 @@ class RndController
 
     public function endpoints(): never
     {
-        Response::toJson([
-            'service'   => 'rnd.mtex.dev',
-            'base_url'  => 'https://rnd.mtex.dev/api',
-            'endpoints' => [
-                ['method' => 'GET', 'path' => '/ping',     'description' => 'Health check'],
-                ['method' => 'GET', 'path' => '/endpoints','description' => 'This list'],
-                ['method' => 'GET', 'path' => '/status',   'description' => 'MTEX platform status (proxied from status.mtex.dev)'],
-                ['method' => 'GET', 'path' => '/uuid',     'description' => 'UUID v4',               'params' => ['count']],
-                ['method' => 'GET', 'path' => '/name',     'description' => 'Random person name',     'params' => ['count', 'gender:male|female|any']],
-                ['method' => 'GET', 'path' => '/email',    'description' => 'Random email address',   'params' => ['count', 'domain']],
-                ['method' => 'GET', 'path' => '/color',    'description' => 'Random color',           'params' => ['count', 'format:hex|rgb|hsl|all']],
-                ['method' => 'GET', 'path' => '/gradient', 'description' => 'Random CSS gradient',    'params' => ['count', 'type:linear|radial|conic']],
-                ['method' => 'GET', 'path' => '/number',   'description' => 'Random number',          'params' => ['count', 'min', 'max', 'float:true|false']],
-                ['method' => 'GET', 'path' => '/string',   'description' => 'Random string',          'params' => ['count', 'length', 'charset:alpha|alphanum|hex|numeric|symbols|all']],
-                ['method' => 'GET', 'path' => '/lorem',    'description' => 'Lorem ipsum text',       'params' => ['count', 'type:words|sentences|paragraphs']],
-                ['method' => 'GET', 'path' => '/ip',       'description' => 'Random IP address',      'params' => ['count', 'type:v4|v6|both']],
-                ['method' => 'GET', 'path' => '/date',     'description' => 'Random date',            'params' => ['count', 'from', 'to', 'format']],
-                ['method' => 'GET', 'path' => '/pick',     'description' => 'Pick from a list',       'params' => ['items (required, comma-separated)', 'count', 'unique:true|false']],
-                ['method' => 'GET', 'path' => '/roll',     'description' => 'Dice roll',              'params' => ['dice (notation e.g. 2d6)', 'count']],
-                ['method' => 'GET', 'path' => '/coin',     'description' => 'Coin flip',              'params' => ['count']],
-                ['method' => 'GET', 'path' => '/hash',     'description' => 'Hash a string',          'params' => ['value (required)', 'algo:md5|sha1|sha256|sha512']],
-                ['method' => 'GET', 'path' => '/password', 'description' => 'Secure random password', 'params' => ['count', 'length', 'symbols:true|false']],
-                ['method' => 'GET', 'path' => '/avatar',   'description' => 'SVG avatar data URI',    'params' => ['seed', 'size', 'style:geometric|initials|pixel']],
-            ],
-        ]);
+        $this->applyCors(Response::make())
+            ->noCache()
+            ->json([
+                'service'   => 'rnd.mtex.dev',
+                'base_url'  => 'https://rnd.mtex.dev/api',
+                'endpoints' => [
+                    ['method' => 'GET', 'path' => '/ping',     'description' => 'Health check'],
+                    ['method' => 'GET', 'path' => '/endpoints','description' => 'This list'],
+                    ['method' => 'GET', 'path' => '/status',   'description' => 'MTEX platform status (proxied from status.mtex.dev)'],
+                    ['method' => 'GET', 'path' => '/uuid',     'description' => 'UUID v4',               'params' => ['count']],
+                    ['method' => 'GET', 'path' => '/name',     'description' => 'Random person name',     'params' => ['count', 'gender:male|female|any']],
+                    ['method' => 'GET', 'path' => '/email',    'description' => 'Random email address',   'params' => ['count', 'domain']],
+                    ['method' => 'GET', 'path' => '/color',    'description' => 'Random color',           'params' => ['count', 'format:hex|rgb|hsl|all']],
+                    ['method' => 'GET', 'path' => '/gradient', 'description' => 'Random CSS gradient',    'params' => ['count', 'type:linear|radial|conic']],
+                    ['method' => 'GET', 'path' => '/number',   'description' => 'Random number',          'params' => ['count', 'min', 'max', 'float:true|false']],
+                    ['method' => 'GET', 'path' => '/string',   'description' => 'Random string',          'params' => ['count', 'length', 'charset:alpha|alphanum|hex|numeric|symbols|all']],
+                    ['method' => 'GET', 'path' => '/lorem',    'description' => 'Lorem ipsum text',       'params' => ['count', 'type:words|sentences|paragraphs']],
+                    ['method' => 'GET', 'path' => '/ip',       'description' => 'Random IP address',      'params' => ['count', 'type:v4|v6|both']],
+                    ['method' => 'GET', 'path' => '/date',     'description' => 'Random date',            'params' => ['count', 'from', 'to', 'format']],
+                    ['method' => 'GET', 'path' => '/pick',     'description' => 'Pick from a list',       'params' => ['items (required, comma-separated)', 'count', 'unique:true|false']],
+                    ['method' => 'GET', 'path' => '/roll',     'description' => 'Dice roll',              'params' => ['dice (notation e.g. 2d6)', 'count']],
+                    ['method' => 'GET', 'path' => '/coin',     'description' => 'Coin flip',              'params' => ['count']],
+                    ['method' => 'GET', 'path' => '/hash',     'description' => 'Hash a string',          'params' => ['value (required)', 'algo:md5|sha1|sha256|sha512']],
+                    ['method' => 'GET', 'path' => '/password', 'description' => 'Secure random password', 'params' => ['count', 'length', 'symbols:true|false']],
+                    ['method' => 'GET', 'path' => '/avatar',   'description' => 'SVG avatar data URI',    'params' => ['seed', 'size', 'style:geometric|initials|pixel']],
+                ],
+            ]);
     }
 
     // ── /api/uuid ─────────────────────────────────────────────────────────────
@@ -411,7 +424,7 @@ class RndController
     {
         $itemsRaw = Request::get('items', '');
         if (empty($itemsRaw)) {
-            Response::make()->status(422)->json(['error' => 'Missing required param: items (comma-separated list)']);
+            $this->applyCors(Response::make())->status(422)->json(['error' => 'Missing required param: items (comma-separated list)']);
         }
 
         $items  = array_values(array_filter(array_map('trim', explode(',', $itemsRaw))));
@@ -419,7 +432,7 @@ class RndController
         $unique = filter_var(Request::get('unique', 'false'), FILTER_VALIDATE_BOOLEAN);
 
         if ($unique && $count > count($items)) {
-            Response::make()->status(422)->json(['error' => "Cannot pick $count unique items from a list of " . count($items)]);
+            $this->applyCors(Response::make())->status(422)->json(['error' => "Cannot pick $count unique items from a list of " . count($items)]);
         }
 
         if ($unique) {
@@ -446,7 +459,7 @@ class RndController
         $count    = $this->count(20);
 
         if (!preg_match('/^(\d+)d(\d+)([+-]\d+)?$/i', trim($notation), $m)) {
-            Response::make()->status(422)->json([
+            $this->applyCors(Response::make())->status(422)->json([
                 'error'   => 'Invalid dice notation. Use format: NdS or NdS+M (e.g. 2d6, 4d8+2)',
                 'example' => ['1d6', '2d20', '3d8+5', '1d100'],
             ]);
@@ -497,18 +510,18 @@ class RndController
     {
         $value = Request::get('value', '');
         if ($value === '') {
-            Response::make()->status(422)->json(['error' => 'Missing required param: value']);
+            $this->applyCors(Response::make())->status(422)->json(['error' => 'Missing required param: value']);
         }
 
         $algo    = Request::get('algo', 'sha256');
         $allowed = ['md5', 'sha1', 'sha256', 'sha512'];
         if (!in_array($algo, $allowed, true)) {
-            Response::make()->status(422)->json(['error' => "Invalid algo. Choose from: " . implode(', ', $allowed)]);
+            $this->applyCors(Response::make())->status(422)->json(['error' => "Invalid algo. Choose from: " . implode(', ', $allowed)]);
         }
 
         $hash = $algo === 'md5' ? md5($value) : hash($algo, $value);
 
-        Response::make()->noCache()->json([
+        $this->applyCors(Response::make())->noCache()->json([
             'input'     => $value,
             'algorithm' => $algo,
             'hash'      => $hash,
@@ -611,7 +624,7 @@ class RndController
 
         $dataUri = 'data:image/svg+xml;base64,' . base64_encode($svg);
 
-        Response::make()->noCache()->json([
+        $this->applyCors(Response::make())->noCache()->json([
             'seed'     => $seed,
             'size'     => $size,
             'style'    => $style,
